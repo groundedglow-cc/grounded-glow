@@ -288,6 +288,8 @@ jobs:
 
 ### 4.4 创建服务器上的 docker-compose
 
+> **注意端口：** light-blog-fe 当前占用宿主机 3000 端口，grounded-glow 使用 3002 端口避免冲突。
+
 SSH 到服务器，创建目录和 compose 文件：
 
 ```bash
@@ -303,7 +305,7 @@ services:
     container_name: grounded-glow-fe
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3002:3000"
 EOF
 ```
 
@@ -323,26 +325,164 @@ EOF
 
 ### 4.6 配置 Nginx（服务器上）
 
-在服务器的 Nginx 中添加主应用的域名配置：
+**当前服务器端口占用：**
+
+| 端口 | 服务 | Nginx 配置文件 |
+|------|------|---------------|
+| 3000 | light-blog-fe | `/etc/nginx/sites-available/light-blog` |
+| 8081 | light-blog API | `/etc/nginx/sites-available/light-blog` |
+| 8090 | attention | `/etc/nginx/sites-available/attention.groundedglow.cc` |
+| 8091 | japaflow | `/etc/nginx/sites-available/japaflow.groundedglow.cc` |
+
+**本次域名指向变更：**
+
+| 域名 | 改造前 | 改造后 | 端口 |
+|------|--------|--------|------|
+| `groundedglow.cc` | light-blog-fe (3000) | **grounded-glow 主应用 (3002)** | 3002 |
+| `blog.groundedglow.cc` | 不存在 | **light-blog-fe (3000)** | 3000 |
+
+**Nginx 配置归属原则：** 配置文件跟着应用走。
+
+| 配置文件 | 管理域名 | 说明 |
+|---------|---------|------|
+| `/etc/nginx/sites-available/light-blog` | `blog.groundedglow.cc` | 原文件，改 server_name |
+| `/etc/nginx/sites-available/grounded-glow` | `groundedglow.cc` | 新建，引用已有 SSL 证书 |
+
+> **操作原则：** 每一步都用 `nginx -t` 验证，出错不会影响线上（Nginx 不会 reload 坏配置）。
+
+---
+
+**Step 1：新建 grounded-glow 配置（不动现有文件，零风险）**
+
+```bash
+sudo vi /etc/nginx/sites-available/grounded-glow
+```
+
+内容（引用已有的 `groundedglow.cc` SSL 证书，`/api/` 继续代理到 Java 后端）：
 
 ```nginx
 server {
-    listen 80;
+    listen 443 ssl;
     server_name groundedglow.cc www.groundedglow.cc;
 
+    ssl_certificate /etc/letsencrypt/live/groundedglow.cc/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/groundedglow.cc/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:3002;
+        proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
+
+server {
+    listen 80;
+    server_name groundedglow.cc www.groundedglow.cc;
+    return 301 https://$host$request_uri;
+}
 ```
 
-配置完后 reload：`sudo nginx -t && sudo systemctl reload nginx`
+创建软链（暂不 reload，等 Step 2 一起做）：
 
-如果需要 HTTPS，用 certbot：`sudo certbot --nginx -d groundedglow.cc -d www.groundedglow.cc`
+```bash
+sudo ln -s /etc/nginx/sites-available/grounded-glow /etc/nginx/sites-enabled/
+```
+
+---
+
+**Step 2：修改 light-blog 配置（改 server_name，让出 groundedglow.cc）**
+
+```bash
+sudo vi /etc/nginx/sites-available/light-blog
+```
+
+改动点（共 3 处，全部是 `server_name`）：
+
+```nginx
+# 改前（HTTPS server 块）
+server_name groundedglow.cc www.groundedglow.cc ;
+
+# 改后
+server_name blog.groundedglow.cc;
+```
+
+```nginx
+# 改前（HTTP → HTTPS 重定向块里的 if 判断）
+if ($host = groundedglow.cc) {
+
+# 改后
+if ($host = blog.groundedglow.cc) {
+```
+
+```nginx
+# 改前（HTTP server 块）
+server_name groundedglow.cc www.groundedglow.cc ;
+
+# 改后
+server_name blog.groundedglow.cc;
+```
+
+其余内容（`/api/` 代理 8081、`/` 代理 3000）保持不变。
+
+---
+
+**Step 3：验证并生效**
+
+```bash
+# 检查配置语法
+sudo nginx -t
+
+# 通过后 reload（不中断现有连接）
+sudo systemctl reload nginx
+```
+
+---
+
+**Step 4：为 blog.groundedglow.cc 申请 SSL 证书**
+
+旧的 SSL 证书是 `groundedglow.cc` 的，`blog.groundedglow.cc` 需要新证书：
+
+```bash
+sudo certbot --nginx -d blog.groundedglow.cc
+```
+
+> **Cloudflare 注意：** 如果 `blog.groundedglow.cc` 在 Cloudflare 开启了代理（橙色云朵），certbot 的 HTTP-01 验证会失败。两种解决方式：
+> - 方式一：临时关闭 Cloudflare 代理（改为 DNS only / 灰色云朵），申请完再开
+> - 方式二：直接使用 Cloudflare 的 SSL（Full 模式），不需要 certbot
+
+---
+
+**Step 5：验证 certbot 续期配置**
+
+旧的 `groundedglow.cc` 证书续期配置可能引用了 `light-blog` 文件名，确认续期正常：
+
+```bash
+# 查看续期配置
+sudo cat /etc/letsencrypt/renewal/groundedglow.cc.conf
+
+# 确认 server 指向已更新为 grounded-glow（如果仍指向 light-blog 需要手动改）
+# 查找这一行：
+# server = /etc/nginx/sites-available/light-blog
+# 改为：
+# server = /etc/nginx/sites-available/grounded-glow
+
+# 测试续期
+sudo certbot renew --dry-run
+```
 
 ### 4.7 提交并发布
 
