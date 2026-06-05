@@ -69,6 +69,6 @@ jobs:
             export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
             export AWS_DEFAULT_REGION="${{ secrets.AWS_REGION }}"
             aws ecr get-login-password --region "${{ secrets.AWS_REGION }}" | sudo docker login --username AWS --password-stdin "${{ steps.login-ecr.outputs.registry }}"
-            sudo docker compose pull grounded-glow
-            sudo docker compose up -d --no-build grounded-glow
+            sudo docker compose pull frontend
+            sudo docker compose up -d --no-build frontend
             sudo docker image prune -f
