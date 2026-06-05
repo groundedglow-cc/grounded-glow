@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" fill="none">
+  <!-- Background gradient -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#bfdbfe"/>
+      <stop offset="100%" stop-color="#93c5fd"/>
+    </radialGradient>
+    <radialGradient id="skin" cx="45%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#fce4c8"/>
+      <stop offset="100%" stop-color="#e8b990"/>
+    </radialGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#1e3a8a"/>
+    </linearGradient>
+  </defs>
+  <circle cx="48" cy="48" r="48" fill="url(#bg)"/>
+
+  <!-- Shadow under head -->
+  <ellipse cx="48" cy="68" rx="18" ry="3" fill="#7db4e6" opacity="0.3"/>
+
+  <!-- Neck with shadow -->
+  <path d="M40 56 L40 64 Q40 66 42 66 L54 66 Q56 66 56 64 L56 56" fill="url(#skin)"/>
+  <path d="M40 58 L56 58" stroke="#d4a06a" stroke-width="0.4" opacity="0.3"/>
+
+  <!-- Body / Polo shirt -->
+  <path d="M16 96 C16 76 30 66 48 66 C66 66 80 76 80 96" fill="url(#shirt)"/>
+  <!-- Collar -->
+  <path d="M40 66 L44 72 L48 68 L52 72 L56 66" fill="#1e3a8a" stroke="#1a347a" stroke-width="0.5"/>
+  <!-- Collar fold shadow -->
+  <path d="M44 72 L48 68 L52 72" fill="none" stroke="#cbd5e1" stroke-width="0.6"/>
+
+  <!-- Face shape - natural contour -->
+  <path d="M28 42 C28 28 35 18 48 18 C61 18 68 28 68 42 C68 48 66 54 62 57 C58 60 54 62 48 62 C42 62 38 60 34 57 C30 54 28 48 28 42Z" fill="url(#skin)"/>
+
+  <!-- Jaw shadow -->
+  <path d="M34 54 C38 58 42 60 48 60 C54 60 58 58 62 54" fill="none" stroke="#d4a06a" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Hair - short textured style -->
+  <path d="M27 38 C27 23 35 14 48 14 C61 14 69 23 69 38 C69 34 67 26 62 21 C57 17 52 16 48 16 C44 16 39 17 34 21 C29 26 27 34 27 38Z" fill="#1a1a2e"/>
+  <!-- Hair texture lines -->
+  <path d="M34 20 Q40 16 48 16 Q56 16 62 20" fill="none" stroke="#252540" stroke-width="0.8"/>
+  <path d="M31 24 Q40 18 48 18 Q56 18 65 24" fill="none" stroke="#252540" stroke-width="0.6"/>
+  <!-- Sideburns -->
+  <path d="M28 38 L27 44 L29 44 L29 38" fill="#1a1a2e"/>
+  <path d="M68 38 L69 44 L67 44 L67 38" fill="#1a1a2e"/>
+
+  <!-- Ears with inner detail -->
+  <ellipse cx="27" cy="42" rx="3.5" ry="5" fill="#f0c8a0"/>
+  <ellipse cx="27" cy="42" rx="2" ry="3.5" fill="none" stroke="#d4a06a" stroke-width="0.5"/>
+  <ellipse cx="69" cy="42" rx="3.5" ry="5" fill="#f0c8a0"/>
+  <ellipse cx="69" cy="42" rx="2" ry="3.5" fill="none" stroke="#d4a06a" stroke-width="0.5"/>
+
+  <!-- Eyebrows - natural thick -->
+  <path d="M35 34 C37 31.5 41 31 44 32.5" stroke="#1a1a2e" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M52 32.5 C55 31 59 31.5 61 34" stroke="#1a1a2e" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Eye sockets shadow -->
+  <ellipse cx="40" cy="39" rx="6" ry="4" fill="#e8b48a" opacity="0.2"/>
+  <ellipse cx="56" cy="39" rx="6" ry="4" fill="#e8b48a" opacity="0.2"/>
+
+  <!-- Eyes - almond shape -->
+  <path d="M35 39 Q40 34 45 39 Q40 42 35 39Z" fill="white"/>
+  <path d="M51 39 Q56 34 61 39 Q56 42 51 39Z" fill="white"/>
+  <!-- Iris -->
+  <circle cx="40" cy="39" r="3" fill="#2c1810"/>
+  <circle cx="56" cy="39" r="3" fill="#2c1810"/>
+  <!-- Pupil -->
+  <circle cx="40" cy="39" r="1.5" fill="#0a0a0a"/>
+  <circle cx="56" cy="39" r="1.5" fill="#0a0a0a"/>
+  <!-- Eye highlight -->
+  <circle cx="41.2" cy="37.8" r="1" fill="white" opacity="0.9"/>
+  <circle cx="57.2" cy="37.8" r="1" fill="white" opacity="0.9"/>
+  <circle cx="39" cy="40" r="0.5" fill="white" opacity="0.5"/>
+  <circle cx="55" cy="40" r="0.5" fill="white" opacity="0.5"/>
+  <!-- Upper eyelid line -->
+  <path d="M35 39 Q40 35 45 39" fill="none" stroke="#1a1a2e" stroke-width="0.8"/>
+  <path d="M51 39 Q56 35 61 39" fill="none" stroke="#1a1a2e" stroke-width="0.8"/>
+  <!-- Lower eyelash hint -->
+  <path d="M36 40 Q40 42 44 40" fill="none" stroke="#3d2b1f" stroke-width="0.3"/>
+  <path d="M52 40 Q56 42 60 40" fill="none" stroke="#3d2b1f" stroke-width="0.3"/>
+
+  <!-- Nose - natural with bridge -->
+  <path d="M48 34 L48 44" stroke="#d4a06a" stroke-width="0.6" opacity="0.5"/>
+  <path d="M45 47 Q48 49 51 47" fill="none" stroke="#c9956a" stroke-width="1" stroke-linecap="round"/>
+  <!-- Nostril hints -->
+  <circle cx="45.5" cy="47" r="0.8" fill="#c9956a" opacity="0.3"/>
+  <circle cx="50.5" cy="47" r="0.8" fill="#c9956a" opacity="0.3"/>
+
+  <!-- Mouth -->
+  <path d="M42 52 Q45 53 48 52.5 Q51 53 54 52" fill="none" stroke="#b87353" stroke-width="1.2" stroke-linecap="round"/>
+  <!-- Lower lip highlight -->
+  <path d="M44 54 Q48 55.5 52 54" fill="#c98a6a" opacity="0.3"/>
+  <!-- Smile line -->
+  <path d="M41 52 Q48 56 55 52" fill="none" stroke="#c47a5a" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- Cheek blush -->
+  <circle cx="34" cy="48" r="4" fill="#f0a0a0" opacity="0.1"/>
+  <circle cx="62" cy="48" r="4" fill="#f0a0a0" opacity="0.1"/>
+</svg>
