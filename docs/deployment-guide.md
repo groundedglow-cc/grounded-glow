@@ -448,10 +448,10 @@ japaflow 容器内的 `server.mjs` 代理 `/api/japaflow/*` 到 `127.0.0.1:8081`
 sudo vi /etc/nginx/sites-available/japaflow.groundedglow.cc
 ```
 
-在 HTTPS server 块中，**在 `location /` 之前**添加 `/api/` 代理：
+在 HTTPS server 块中，**在 `location /` 之前**添加 `/api/japaflow/` 代理（注意：只代理 `/api/japaflow/`，不能用 `/api/`，否则会拦截 server.mjs 自身的 `/api/frontend-config`、`/api/audio/*` 等接口）：
 
 ```nginx
-    location /api/ {
+    location /api/japaflow/ {
         proxy_pass http://127.0.0.1:8081;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
