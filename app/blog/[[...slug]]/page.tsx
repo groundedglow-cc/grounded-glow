@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { WujieApp } from '@/components/wujie-app'
+import { BLOG_APP_URL } from '@/lib/constants'
 
 export default function BlogPage() {
   const router = useRouter()
@@ -12,7 +13,7 @@ export default function BlogPage() {
     <div className="flex-1">
       <WujieApp
         name="blog"
-        url={`http://localhost:3001${subPath}`}
+        url={`${BLOG_APP_URL}${subPath}`}
         onAuthExpired={() => router.push(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
       />
     </div>

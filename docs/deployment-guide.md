@@ -440,6 +440,34 @@ server_name blog.groundedglow.cc;
 
 ---
 
+**Step 2.5：修改 japaflow.groundedglow.cc 的 Nginx 配置**
+
+japaflow 容器内的 `server.mjs` 代理 `/api/japaflow/*` 到 `127.0.0.1:8081`，但容器内的 `127.0.0.1` 是容器自身，不是宿主机。需要在宿主机 Nginx 层直接代理到 Java 后端。
+
+```bash
+sudo vi /etc/nginx/sites-available/japaflow.groundedglow.cc
+```
+
+在 HTTPS server 块中，**在 `location /` 之前**添加 `/api/` 代理：
+
+```nginx
+    location /api/ {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:8091;
+        # ... 已有配置保持不变
+    }
+```
+
+---
+
 **Step 3：验证并生效**
 
 ```bash
